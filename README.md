@@ -65,7 +65,7 @@ This repository contains production-ready Terraform modules for Azure infrastruc
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/azure-terraform-modules.git
+   git clone https://github.com/Caesarsage/terraform-azure.git
    cd azure-terraform-modules
    ```
 
@@ -263,8 +263,8 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 ## 🆘 Support
 
 - **Documentation**: Check individual module READMEs for detailed usage examples
-- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/your-username/azure-terraform-modules/issues)
-- **Discussions**: Join community discussions in [GitHub Discussions](https://github.com/your-username/azure-terraform-modules/discussions)
+- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/Caesarsage/terraform-azure/issues)
+- **Discussions**: Join community discussions in [GitHub Discussions](https://github.com/Caesarsage/terraform-azure/discussions)
 
 ## 📄 License
 
