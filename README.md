@@ -66,7 +66,7 @@ This repository contains production-ready Terraform modules for Azure infrastruc
 1. **Clone the repository**
    ```bash
    git clone https://github.com/Caesarsage/terraform-azure.git
-   cd azure-terraform-modules
+   cd terraform-azure
    ```
 
 2. **Authenticate with Azure**
@@ -79,7 +79,7 @@ This repository contains production-ready Terraform modules for Azure infrastruc
    ```hcl
    module "resource_group" {
      source = "./azure-resource-group"
-     
+
      resource_group_name = "my-resource-group"
      location           = "East US"
      tags = {
@@ -106,12 +106,12 @@ module-name/
 ```hcl
 module "networking" {
   source = "./azure-networking"
-  
+
   vnet_name           = "my-vnet"
   vnet_address_space  = ["10.0.0.0/16"]
   location           = "East US"
   resource_group_name = "my-rg"
-  
+
   subnets = {
     "web" = {
       address_prefixes = ["10.0.1.0/24"]
@@ -120,7 +120,7 @@ module "networking" {
       address_prefixes = ["10.0.2.0/24"]
     }
   }
-  
+
   tags = {
     Environment = "Production"
   }
@@ -128,11 +128,11 @@ module "networking" {
 
 module "vm" {
   source = "./azure-vm"
-  
+
   location           = "East US"
   resource_group_name = "my-rg"
   subnet_id          = module.networking.subnet_ids["web"]
-  
+
   vm_configs = [
     {
       name = "web-vm-01"
@@ -159,11 +159,11 @@ module "vm" {
       ]
     }
   ]
-  
+
   admin_username    = "azureuser"
   ssh_public_key    = file("~/.ssh/id_rsa.pub")
   create_public_ip  = true
-  
+
   tags = {
     Environment = "Production"
   }
@@ -174,7 +174,7 @@ module "vm" {
 
 ### Terraform Providers
 
-All modules require the following Terraform providers:
+All modules require a Terraform providers, example:
 
 ```hcl
 terraform {
@@ -232,39 +232,12 @@ All modules are designed to be highly configurable. Key customization points inc
 
 ## 📝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests and documentation
-5. Submit a pull request
-
-### Development Setup
-
-1. Install pre-commit hooks
-   ```bash
-   pre-commit install
-   ```
-
-2. Run tests
-   ```bash
-   terraform fmt -check -recursive
-   terraform validate
-   ```
-
-3. Follow our coding standards:
-   - Use consistent naming conventions
-   - Add comprehensive variable descriptions
-   - Include examples in module READMEs
-   - Follow Terraform best practices
-
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md).
 
 ## 🆘 Support
 
 - **Documentation**: Check individual module READMEs for detailed usage examples
 - **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/Caesarsage/terraform-azure/issues)
-- **Discussions**: Join community discussions in [GitHub Discussions](https://github.com/Caesarsage/terraform-azure/discussions)
 
 ## 📄 License
 
