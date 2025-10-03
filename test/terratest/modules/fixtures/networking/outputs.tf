@@ -17,14 +17,3 @@ output "nsg_ids" {
   description = "Map of NSG names to IDs"
   value       = module.networking.nsg_ids
 }
-
-output "nat_gateway_ids" {
-  description = "Map of NAT Gateway names to IDs"
-  value       = module.networking.nat_gateway_ids
-}
-
-output "nat_gateway_public_ip_ids" {
-  description = "Map of NAT Gateway public IP names to IDs"
-  value       = module.networking.nat_gateway_public_ip_ids
-}
-
