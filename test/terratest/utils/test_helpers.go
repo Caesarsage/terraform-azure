@@ -33,6 +33,7 @@ func GetTestConfig() *TestConfig {
 			"Test":        "true",
 			"CreatedBy":   "Terratest",
 		},
+
 	}
 }
 
@@ -40,21 +41,24 @@ func GetTestConfig() *TestConfig {
 func getTestResourceGroupName() string {
 	baseName := os.Getenv("TEST_RESOURCE_GROUP_NAME")
 	if baseName == "" {
-		baseName = "test-rg"
+		baseName = "rg-tests"
 	}
 
-	// Add random suffix to avoid conflicts
-	suffix := random.UniqueId()
-	return fmt.Sprintf("%s-%s", baseName, suffix)
+	return baseName
 }
 
 // getTestLocation returns the Azure location for testing
 func getTestLocation() string {
 	location := os.Getenv("TEST_LOCATION")
 	if location == "" {
-		location = "West US"
+		location = "West Europe"
 	}
 	return location
+}
+
+func GenerateUniqueName(prefix string) string {
+	suffix := random.UniqueId()
+	return fmt.Sprintf("%s-%s", prefix, suffix)
 }
 
 // GetTerraformOptions creates standardized Terraform options for testing
