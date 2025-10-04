@@ -17,6 +17,10 @@ skip-path:
   - examples/
   - docs/
 
+# Skip specific checks
+skip-check:
+  - CKV_AZURE_119  # NICs with public IPs allowed by design
+
 # Filter checks by policy metadata (optional)
 policy-metadata-filter: "category=security,provider=azure,framework=terraform"
 
