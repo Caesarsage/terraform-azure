@@ -123,3 +123,5 @@ kubeconfig*
 # Logs
 *.log
 l
+
+test-results/* 
