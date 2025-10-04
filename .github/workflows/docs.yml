@@ -1,4 +1,4 @@
-name: Test Azure Terraform Modules Documentation
+name: Documentation
 
 on:
   push:
@@ -8,23 +8,23 @@ on:
   workflow_dispatch:
 
 env:
-  TF_VERSION: "1.6.0"
-  GO_VERSION: "1.21"
+  TF_VERSION: "1.9.0"
+  GO_VERSION: "1.22"
 
 jobs:
   docs-tests:
     name: Documentation Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: false
 
       - name: Install documentation tools
         run: |
@@ -33,20 +33,15 @@ jobs:
       - name: Validate documentation
         run: |
           # Check if all modules have README files
-          for module in azure-*/; do
-            if [ ! -f "$module/README.md" ]; then
-              echo "Missing README.md for module: $module"
-              exit 1
+          missing_readmes=()
+          for module in azure-* modules/azure-*; do
+            if [[ -d "$module" ]] && [[ ! -f "$module/README.md" ]]; then
+              missing_readmes+=("$module")
             fi
           done
 
-      - name: Generate documentation
-        run: |
-          # Generate documentation for each module
-          for module in azure-*/; do
-            echo "Generating docs for $module"
-            cd "$module"
-            terraform-docs markdown table --output-file README.md --output-mode inject . || true
-            cd ..
-          done
-
+          if [[ ${#missing_readmes[@]} -gt 0 ]]; then
+            echo "::error::Missing README.md in the following modules:"
+            printf '  - %s\n' "${missing_readmes[@]}"
+            exit 1
+          fi
