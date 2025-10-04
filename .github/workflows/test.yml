@@ -28,7 +28,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Checkov (pinned)
-        run: pip install 'checkov==3.2.328'
+        run: pip install 'checkov==3.2.473'
 
       - name: Format check
         run: terraform fmt -check -recursive .
