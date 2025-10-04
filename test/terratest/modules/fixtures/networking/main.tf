@@ -26,7 +26,7 @@ module "networking" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "22"
-          source_address_prefix      = "*"
+          source_address_prefix      = "10.0.0.0/8"
           destination_address_prefix = "*"
         },
         {
@@ -37,7 +37,7 @@ module "networking" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "80"
-          source_address_prefix      = "*"
+          source_address_prefix      = "10.0.0.0/8"
           destination_address_prefix = "*"
         }
       ]
@@ -53,17 +53,17 @@ module "networking" {
   }
 
   # No private endpoints, route tables, or NAT gateways for basic test
-  private_endpoints                = {}
-  route_tables                     = {}
-  subnet_route_table_associations  = {}
-  nat_gateways                     = {}
-  subnet_nat_gateway_associations  = {}
+  private_endpoints               = {}
+  route_tables                    = {}
+  subnet_route_table_associations = {}
+  nat_gateways                    = {}
+  subnet_nat_gateway_associations = {}
 
   tags = var.tags
 }
 
 variable "vnet_name" {
-  type = string
+  type    = string
   default = "test-vnet"
 }
 
@@ -78,7 +78,7 @@ variable "location" {
 }
 
 variable "tags" {
-  type    = map(string)
+  type = map(string)
   default = {
     environment = "test"
     project     = "terratest"

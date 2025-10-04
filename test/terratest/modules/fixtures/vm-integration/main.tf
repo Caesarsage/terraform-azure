@@ -35,7 +35,7 @@ module "networking" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "22"
-          source_address_prefix      = "*"
+          source_address_prefix      = "10.0.0.0/8"
           destination_address_prefix = "*"
         },
         {
@@ -46,7 +46,7 @@ module "networking" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "80"
-          source_address_prefix      = "*"
+          source_address_prefix      = "10.0.0.0/8"
           destination_address_prefix = "*"
         }
       ]
@@ -81,9 +81,9 @@ module "vm" {
   ssh_public_key      = tls_private_key.test.public_key_openssh
 
   # VM Configuration
-  create_public_ip                = var.create_public_ip
-  attach_network_security_group   = var.attach_nsg
-  network_security_group_id       = var.attach_nsg ? module.networking.nsg_ids["vm-nsg"] : null
+  create_public_ip              = var.create_public_ip
+  attach_network_security_group = var.attach_nsg
+  network_security_group_id     = var.attach_nsg ? module.networking.nsg_ids["vm-nsg"] : null
 
   vm_configs = [
     {
@@ -168,7 +168,7 @@ variable "ssh_public_key" {
 }
 
 variable "attach_nsg" {
-  type = bool
+  type    = bool
   default = false
 }
 
@@ -178,7 +178,7 @@ variable "create_data_disk" {
 }
 
 variable "tags" {
-  type    = map(string)
+  type = map(string)
   default = {
     environment = "test"
     project     = "terratest"

@@ -104,6 +104,10 @@ resource "azurerm_managed_disk" "data_disks" {
   create_option        = "Empty"
   disk_size_gb         = local.data_disks[count.index].disk_size_gb
 
+  public_network_access_enabled = false
+
+  disk_encryption_set_id = var.disk_encryption_set_id
+
   tags = var.tags
 }
 

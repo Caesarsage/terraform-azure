@@ -23,12 +23,12 @@ This module creates a comprehensive Azure networking infrastructure including Vi
 ```hcl
 module "networking" {
   source = "./azure-networking"
-  
+
   vnet_name           = "my-vnet"
   vnet_address_space  = ["10.0.0.0/16"]
   location           = "East US"
   resource_group_name = "my-rg"
-  
+
   subnets = {
     "web" = {
       address_prefixes = ["10.0.1.0/24"]
@@ -40,7 +40,7 @@ module "networking" {
       address_prefixes = ["10.0.3.0/24"]
     }
   }
-  
+
   tags = {
     Environment = "Production"
     Project     = "WebApp"
@@ -53,12 +53,12 @@ module "networking" {
 ```hcl
 module "networking" {
   source = "./azure-networking"
-  
+
   vnet_name           = "vnet-prod-webapp"
   vnet_address_space  = ["10.0.0.0/16", "10.1.0.0/16"]
   location           = "East US"
   resource_group_name = "rg-prod-webapp"
-  
+
   # Subnets with service endpoints
   subnets = {
     "web" = {
@@ -81,7 +81,7 @@ module "networking" {
       }
     }
   }
-  
+
   # Network Security Groups
   network_security_groups = {
     "web-nsg" = {
@@ -94,7 +94,7 @@ module "networking" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "80"
-          source_address_prefix      = "*"
+          source_address_prefix      = "10.0.0.0/8"
           destination_address_prefix = "*"
         },
         {
@@ -105,7 +105,7 @@ module "networking" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_range     = "443"
-          source_address_prefix      = "*"
+          source_address_prefix      = "10.0.0.0/8"
           destination_address_prefix = "*"
         }
       ]
@@ -126,7 +126,7 @@ module "networking" {
       ]
     }
   }
-  
+
   # Associate NSGs with subnets
   subnet_nsg_associations = {
     "web-nsg-association" = {
@@ -138,7 +138,7 @@ module "networking" {
       nsg_name    = "app-nsg"
     }
   }
-  
+
   # NAT Gateways for outbound connectivity
   nat_gateways = {
     "web-nat-gateway" = {
@@ -146,14 +146,14 @@ module "networking" {
       idle_timeout_in_minutes = 4
     }
   }
-  
+
   subnet_nat_gateway_associations = {
     "web-nat-association" = {
       subnet_name      = "web"
       nat_gateway_name = "web-nat-gateway"
     }
   }
-  
+
   # Private Endpoints
   private_endpoints = {
     "storage-private-endpoint" = {
@@ -162,7 +162,7 @@ module "networking" {
       subresource_names  = ["blob"]
     }
   }
-  
+
   tags = {
     Environment = "Production"
     Project     = "WebApp"
@@ -209,12 +209,12 @@ module "networking" {
 ```hcl
 module "hub_networking" {
   source = "./azure-networking"
-  
+
   vnet_name           = "vnet-hub"
   vnet_address_space  = ["10.0.0.0/16"]
   location           = "East US"
   resource_group_name = "rg-hub"
-  
+
   subnets = {
     "gateway" = {
       address_prefixes = ["10.0.1.0/24"]
@@ -226,7 +226,7 @@ module "hub_networking" {
       address_prefixes = ["10.0.3.0/24"]
     }
   }
-  
+
   tags = {
     Environment = "Production"
     Architecture = "Hub-Spoke"
@@ -239,12 +239,12 @@ module "hub_networking" {
 ```hcl
 module "microservices_networking" {
   source = "./azure-networking"
-  
+
   vnet_name           = "vnet-microservices"
   vnet_address_space  = ["10.1.0.0/16"]
   location           = "East US"
   resource_group_name = "rg-microservices"
-  
+
   subnets = {
     "frontend" = {
       address_prefixes = ["10.1.1.0/24"]
@@ -259,7 +259,7 @@ module "microservices_networking" {
       address_prefixes = ["10.1.4.0/24"]
     }
   }
-  
+
   # NAT Gateway for outbound connectivity
   nat_gateways = {
     "main-nat-gateway" = {
@@ -267,7 +267,7 @@ module "microservices_networking" {
       idle_timeout_in_minutes = 4
     }
   }
-  
+
   subnet_nat_gateway_associations = {
     "frontend-nat" = {
       subnet_name      = "frontend"
@@ -278,7 +278,7 @@ module "microservices_networking" {
       nat_gateway_name = "main-nat-gateway"
     }
   }
-  
+
   tags = {
     Environment = "Production"
     Architecture = "Microservices"

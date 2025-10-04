@@ -93,3 +93,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+variable "disk_encryption_set_id" {
+  description = "ID of the Disk Encryption Set for customer-managed key encryption. Leave null to use platform-managed keys."
+  type        = string
+  default     = null
+}
