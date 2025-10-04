@@ -13,7 +13,6 @@ env:
   PYTHON_VERSION: "3.11"
 
 jobs:
-  # Quick validation checks
   validation-tests:
     name: Validation Tests
     runs-on: ubuntu-latest
@@ -62,9 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: validation-tests
-    permissions:
-      security-events: write
-      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,37 +70,36 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Run security tests
+        id: run_sec
+        continue-on-error: true
         run: |
           chmod +x test/security/run_security_tests.sh
           ./test/security/run_security_tests.sh all
 
-      - name: Upload security results
-        uses: actions/upload-artifact@v4
+      - name: Security summary
         if: always()
-        with:
-          name: security-results
-          path: test-results/security/
-          retention-days: 30
+        run: |
+          echo "## Security results" >> $GITHUB_STEP_SUMMARY
+          f="$(ls -1 test-results/security/checkov-*.json 2>/dev/null | head -n1 || true)"
+          if [ -n "$f" ]; then
+            jq -r '"Checkov: failed=\(.summary.failed // 0), passed=\(.summary.passed // 0)"' "$f" >> $GITHUB_STEP_SUMMARY || true
+          else
+            echo "No Checkov JSON found" >> $GITHUB_STEP_SUMMARY
+          fi
 
-      - name: Upload Trivy SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: test-results/security/trivy-project-root.sarif
-          category: trivy
+      - name: Fail job if security tests failed
+        if: steps.run_sec.outcome == 'failure'
+        run: exit 1
 
-      - name: Upload Checkov SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: test-results/security/checkov-project-root.sarif
-          category: checkov
 
   # Terratest - TODO: Set github secrets and uncomment
   # terratest:
@@ -183,6 +178,7 @@ jobs:
   #           test/terratest/test-results/
   #         retention-days: 14
 
+
   test-summary:
     name: Test Summary
     runs-on: ubuntu-latest
@@ -192,14 +188,7 @@ jobs:
       - name: Check test results
         run: |
           if [[ "${{ needs.validation-tests.result }}" != "success" ]]; then
-            echo "::error::Validation tests failed"
-            exit 1
-          fi
+            echo "::error::Validation tests failed"; exit 1; fi
           if [[ "${{ needs.security-tests.result }}" != "success" ]]; then
-            echo "::warning::Security tests failed"
-          fi
-          # if [[ "${{ needs.terratest.result }}" != "success" ]] && [[ "${{ needs.terratest.result }}" != "skipped" ]]; then
-          #   echo "::error::Terratest failed"
-          #   exit 1
-          # fi
+            echo "::warning::Security tests failed"; fi
           echo "::notice::All required tests passed"
