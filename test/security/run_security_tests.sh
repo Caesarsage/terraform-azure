@@ -133,6 +133,25 @@ run_checkov() {
   local rc=$?
   set -e
 
+  # Pretty-print failures to GitHub Actions log
+  if command -v jq >/dev/null 2>&1 && [[ -s "$out" ]]; then
+    echo "::group::Checkov failed checks"
+    jq -r '
+        .results.failed_checks[]? |
+        "\(.severity)\t\(.check_id)\t\(.check_name)\n  file:\(.file_path):\(.file_line_range[0] // 1)  resource:\(.resource)\n  guideline:\(.guideline // "n/a")\n"
+    ' "$out"
+    echo "::endgroup::"
+
+    # Inline annotations on the PR (non-fatal warnings)
+    jq -r '
+        .results.failed_checks[]? |
+        "::warning file=\(.file_path),line=\(.file_line_range[0] // 1),title=\(.check_id) \(.severity)::\(.check_name)"
+    ' "$out"
+  else
+    # Fallback: dump raw output
+    [ -f "$out" ] && cat "$out" || true
+  fi
+
   if command -v jq >/dev/null 2>&1 && [[ -f "$out" ]]; then
     local passed failed
     passed=$(jq -r '.summary.passed // 0' "$out")
