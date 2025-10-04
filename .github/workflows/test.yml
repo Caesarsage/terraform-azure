@@ -9,30 +9,26 @@ on:
 
 env:
   TF_VERSION: "1.9.0"
-  GO_VERSION: "1.22"
   PYTHON_VERSION: "3.11"
+  FAIL_ON_SECURITY: "true"
 
 jobs:
   validation-tests:
-    name: Validation Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Checkov
-        run: pip install checkov
+      - name: Install Checkov (pinned)
+        run: pip install 'checkov==3.2.328'
 
       - name: Format check
         run: terraform fmt -check -recursive .
@@ -50,40 +46,37 @@ jobs:
 
       - name: Quick security scan
         run: |
-          checkov -d . \
-            --framework terraform \
-            --quiet \
-            --output cli \
-            --soft-fail || true
+          checkov -d . --framework terraform --quiet --output cli --soft-fail || true
 
   security-tests:
-    name: Security Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: validation-tests
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Run security tests
         id: run_sec
-        continue-on-error: true
+        env:
+          FAIL_ON_SECURITY: ${{ env.FAIL_ON_SECURITY }}
         run: |
           chmod +x test/security/run_security_tests.sh
-          ./test/security/run_security_tests.sh all
+          if [ "${FAIL_ON_SECURITY}" = "false" ]; then
+            ./test/security/run_security_tests.sh all || echo "::warning::Security checks found issues; continuing"
+          else
+            ./test/security/run_security_tests.sh all
+          fi
 
       - name: Security summary
         if: always()
@@ -99,7 +92,6 @@ jobs:
       - name: Fail job if security tests failed
         if: steps.run_sec.outcome == 'failure'
         run: exit 1
-
 
   # Terratest - TODO: Set github secrets and uncomment
   # terratest:

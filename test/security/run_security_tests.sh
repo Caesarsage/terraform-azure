@@ -124,8 +124,8 @@ run_checkov() {
   )
 
   # Use config if exists
-  if [[ -f "$SCRIPT_DIR/.checkov.yaml" ]]; then
-    args+=(--config-file "$SCRIPT_DIR/.checkov.yaml")
+  if [[ -f "$PROJECT_ROOT/.checkov.yaml" ]]; then
+    args+=(--config-file "$PROJECT_ROOT/.checkov.yaml")
   fi
 
   set +e
