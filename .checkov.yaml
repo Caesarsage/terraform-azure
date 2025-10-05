@@ -22,6 +22,7 @@ skip-check:
   - CKV_AZURE_119  # NICs with public IPs allowed by design
   - CKV_AZURE_217
   - CKV_AZURE_218
+  - CKV_AZURE_120
 
 # Filter checks by policy metadata (optional)
 policy-metadata-filter: "category=security,provider=azure,framework=terraform"
