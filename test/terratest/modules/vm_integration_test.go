@@ -37,7 +37,7 @@ func TestVMIntegration(t *testing.T) {
 	}
 
 	terraformOptions := &terraform.Options{
-		TerraformDir: "./fixtures/vm-integration",
+		TerraformDir: "./fixtures/vm_integration",
 		Vars:         vars,
 		NoColor:      true,
 		RetryableTerraformErrors: map[string]string{
