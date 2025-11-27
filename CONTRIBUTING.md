@@ -6,11 +6,13 @@ Thanks for your interest in contributing.
 1. Fork the repo; create a feature branch.
 2. Make changes; keep modules self-contained and documented.
 3. Format and validate:
+
 ```bash
    terraform fmt -recursive
    terraform --init
    terraform validate
 ```
+
 4. Run tests:
 ```bash
    cd test/terratest
@@ -56,7 +58,6 @@ module-name/
 ├── variables.tf   # types, defaults, validation, descriptions
 ├── outputs.tf     # descriptions for every output
 ├── README.md      # usage, inputs, outputs, examples
-└── examples/      # minimal runnable examples
 ```
 
 ## Documentation
@@ -67,7 +68,9 @@ module-name/
   - AzureRM provider: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
   - Azure Architecture Center: https://learn.microsoft.com/azure/architecture/
 
-## Testing (Terratest)
+## Testing
+
+### Terratest
 - Tests live under `test/terratest/`.
 - Use fixtures that wrap the module and supply the provider.
 
@@ -106,6 +109,21 @@ output "location" { value = module.rg.location }
 ```bash
 go test ./test/terratest/... -v
 go test -short ./... -v
+```
+
+### Security tests
+
+> Usage: ./run_security_tests.sh [command] [optional_folder]
+
+#### Checkov
+```bash
+./test/security/run_security_tests.sh run_checkov azure-postgresql-flexible
+```
+
+#### Trivy
+
+```bash
+./test/security/run_security_tests.sh run_trivy azure-postgresql-flexible
 ```
 
 ## Coding Standards
