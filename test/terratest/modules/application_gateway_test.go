@@ -4,11 +4,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Caesarsage/terraform-azure/utils"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/Caesarsage/terraform-azure/utils"
 )
 
 func TestApplicationGateway(t *testing.T) {

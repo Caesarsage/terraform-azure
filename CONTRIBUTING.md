@@ -13,6 +13,7 @@ Thanks for your interest in contributing.
 ```
 4. Run tests:
 ```bash
+   cd test/terratest
    go test ./test/terratest/... -v
 ```
 5. Update module README and examples.
